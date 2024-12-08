@@ -10,7 +10,7 @@ plugins {
 }
 
 setGroup("net.elytrium")
-setVersion("1.2.0-SNAPSHOT-1")
+setVersion("1.2.0-SNAPSHOT-2")
 
 java {
     setSourceCompatibility(JavaVersion.VERSION_17)

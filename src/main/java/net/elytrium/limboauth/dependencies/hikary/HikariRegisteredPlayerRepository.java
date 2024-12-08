@@ -311,9 +311,9 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
     @Override
     public void updateLogin(String lowercase, String loginIp, Long loginDate) throws DataAccessException {
         try (Connection con = getConnection()) {
-            PreparedStatement st = con.prepareStatement("UPDATE AUTH SET LOGINIP = ? AND LOGINDATE = ? WHERE LOWERCASENICKNAME = ?");
+            PreparedStatement st = con.prepareStatement("UPDATE AUTH SET LOGINIP = ?, LOGINDATE = ? WHERE LOWERCASENICKNAME = ?");
             st.setString(1, loginIp);
-            st.setLong(1, loginDate);
+            st.setLong(2, loginDate);
             st.setString(3, lowercase);
             st.executeUpdate();
         } catch (SQLException e) {
