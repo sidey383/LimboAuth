@@ -5,10 +5,7 @@ import net.elytrium.limboauth.dependencies.BaseLibrary;
 import net.elytrium.limboauth.dependencies.hikary.HikariRegisteredPlayerRepository;
 import net.elytrium.limboauth.repository.RegisteredPlayerRepository;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.sql.SQLException;
 
 @Getter
 public enum DataProvider {

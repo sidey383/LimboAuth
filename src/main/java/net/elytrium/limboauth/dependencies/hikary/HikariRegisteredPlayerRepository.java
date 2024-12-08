@@ -54,7 +54,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
 
     public void updateSchema(DataProvider dataProvider) throws SQLException {
         try (Connection con = getConnection()) {
-            CallableStatement createStatement = con.prepareCall("""
+            PreparedStatement createStatement = con.prepareStatement("""
                     CREATE TABLE IF NOT EXISTS AUTH (
                       NICKNAME varchar(255),
                       LOWERCASENICKNAME varchar(255) PRIMARY KEY,
@@ -108,7 +108,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
             st.setString(1, name);
             st.execute();
             ResultSet resultSet = st.getResultSet();
-            if (resultSet.next()) {
+            if (resultSet != null && resultSet.next()) {
                 return Optional.of(parseRegisteredPlayer(resultSet));
             } else {
                 return Optional.empty();
@@ -143,7 +143,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
             st.execute();
             ResultSet resultSet = st.getResultSet();
             List<RegisteredPlayer> players = new ArrayList<>();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 players.add(parseRegisteredPlayer(resultSet));
             }
             return Collections.unmodifiableList(players);
@@ -177,7 +177,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
             st.execute();
             ResultSet resultSet = st.getResultSet();
             List<RegisteredPlayer> players = new ArrayList<>();
-            while (resultSet.next()) {
+            while (resultSet != null && resultSet.next()) {
                 players.add(parseRegisteredPlayer(resultSet));
             }
             return Collections.unmodifiableList(players);
@@ -210,7 +210,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
             );
             selectStatement.setString(1, player.getLowercaseNickname());
             ResultSet resultSet = selectStatement.getResultSet();
-            if (resultSet.next()) return;
+            if (resultSet != null && resultSet.next()) return;
             PreparedStatement insertStatement = con.prepareStatement(
                     """
                             INSERT INTO AUTH
@@ -287,7 +287,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
     @Override
     public void updateHash(String lowercaseName, String hash) throws DataAccessException {
         try (Connection con = getConnection()) {
-            PreparedStatement st = con.prepareCall("UPDATE AUTH SET HASH = ? WHERE LOWERCASENICKNAME = ?");
+            PreparedStatement st = con.prepareStatement("UPDATE AUTH SET HASH = ? WHERE LOWERCASENICKNAME = ?");
             st.setString(1, hash);
             st.setString(2, lowercaseName);
             st.executeUpdate();
@@ -311,7 +311,7 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
     @Override
     public void updateLogin(String lowercase, String loginIp, Long loginDate) throws DataAccessException {
         try (Connection con = getConnection()) {
-            PreparedStatement st = con.prepareCall("UPDATE AUTH SET LOGINIP = ? AND LOGINDATE = ? WHERE LOWERCASENICKNAME = ?");
+            PreparedStatement st = con.prepareStatement("UPDATE AUTH SET LOGINIP = ? AND LOGINDATE = ? WHERE LOWERCASENICKNAME = ?");
             st.setString(1, loginIp);
             st.setLong(1, loginDate);
             st.setString(3, lowercase);
@@ -324,10 +324,10 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
     @Override
     public boolean isHashEmptyByPremiumUuid(String uuid) throws DataAccessException {
         try (Connection con = getConnection()) {
-            PreparedStatement st = con.prepareCall("SELECT HASH FROM AUTH WHERE PREMIUMUUID = ?");
+            PreparedStatement st = con.prepareStatement("SELECT HASH FROM AUTH WHERE PREMIUMUUID = ?");
             st.setString(1, uuid);
             ResultSet resultSet = st.getResultSet();
-            return resultSet.next() && "".equals(resultSet.getString("HASH"));
+            return resultSet != null && resultSet.next() && "".equals(resultSet.getString("HASH"));
         } catch (SQLException e) {
             throw new DataAccessException(e);
         }
@@ -336,10 +336,10 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
     @Override
     public boolean isHashEmptyByLowercaseName(String name) throws DataAccessException {
         try (Connection con = getConnection()) {
-            PreparedStatement st = con.prepareCall("SELECT HASH FROM AUTH WHERE LOWERCASENICKNAME = ?");
+            PreparedStatement st = con.prepareStatement("SELECT HASH FROM AUTH WHERE LOWERCASENICKNAME = ?");
             st.setString(1, name);
             ResultSet resultSet = st.getResultSet();
-            return resultSet.next() && "".equals(resultSet.getString("HASH"));
+            return resultSet != null && resultSet.next() && "".equals(resultSet.getString("HASH"));
         } catch (SQLException e) {
             throw new DataAccessException(e);
         }
@@ -347,9 +347,9 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
 
     public int registeredPlayerCount() {
         try (Connection con = getConnection()) {
-            CallableStatement st = con.prepareCall("SELECT COUNT(*) FROM AUTH");
+            PreparedStatement st = con.prepareStatement("SELECT COUNT(*) FROM AUTH");
             ResultSet set = st.getResultSet();
-            if (set.next()) {
+            if (set != null && set.next()) {
                 return set.getInt(1);
             } else {
                 return 0;
