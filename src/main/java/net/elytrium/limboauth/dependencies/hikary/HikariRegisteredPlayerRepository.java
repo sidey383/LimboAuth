@@ -253,16 +253,16 @@ public class HikariRegisteredPlayerRepository implements RegisteredPlayerReposit
             PreparedStatement updateStatement = con.prepareStatement(
                     """
                             UPDATE AUTH
-                            SET NICKNAME = ? and
-                                HASH = ? and
-                                IP = ? and
-                                LOGINIP = ? and
-                                TOTPTOKEN = ? and
-                                REGDATE = ? and
-                                LOGINDATE = ? and
-                                UUID = ? and
-                                PREMIUMUUID = ? and
-                                ISSUEDTIME = ? and
+                            SET NICKNAME = ?,
+                                HASH = ?,
+                                IP = ?,
+                                LOGINIP = ?,
+                                TOTPTOKEN = ?,
+                                REGDATE = ?,
+                                LOGINDATE = ?,
+                                UUID = ?,
+                                PREMIUMUUID = ?,
+                                ISSUEDTIME = ?
                             WHERE LOWERCASENICKNAME = ?
                             """
             );
